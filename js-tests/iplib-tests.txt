@@ -1,0 +1,101 @@
+/* Tests for iplib.js */
+(function () {
+
+      console.log('IPlib Tests');
+      var normalRange = [
+        IPlib.getIp4ByteArray('192.168.0.0'),
+        IPlib.getIp4ByteArray('192.168.0.255')];
+      var normalMask = IPlib.getMask(normalRange[0], normalRange[1]);
+
+      var complexRange = [
+        IPlib.getIp4ByteArray('221.0.0.0'),
+        IPlib.getIp4ByteArray('221.3.127.255')];
+      var complexMask = IPlib.getMask(complexRange[0], complexRange[1]);
+
+      var wrongIp = IPlib.getIp4ByteArray('10.0.0.300');
+
+      console.log('getRanges expected null',
+        IPlib.getRanges(normalRange[0], wrongIp));
+
+      console.log('getRanges expected null',
+        IPlib.getRanges(normalRange[1], normalRange [0]));
+
+      console.log('getRanges normal (one) range',
+        IPlib.getRanges(normalRange[0], normalRange [1]));
+
+      console.log('getRanges complex range, three ranges',
+        IPlib.getRanges(complexRange[0], complexRange [1]));
+
+      console.log('Constants',
+        IPlib.ERR_MASK_OK,
+        IPlib.ERR_MASK_WRONG,
+        IPlib.ERR_MASK_COMPLEX);
+
+      console.log('getIp4ByteArray Ok', normalRange[0]);
+      console.log('getIp4ByteArray Wrong', wrongIp);
+
+      console.log('getMask Ok',
+        normalRange[0], normalRange[1], normalMask);
+
+      console.log('getMask Wrong',
+        IPlib.getMask(normalRange[0], wrongIp));
+
+      console.log('getPrefixBitsNumber normal, expected bits:24, error:0',
+        IPlib.getPrefixBitsNumber(normalMask));
+
+      console.log('getPrefixBitsNumber null, expected bits:-1, error:1',
+        IPlib.getPrefixBitsNumber(null));
+
+      console.log('getPrefixBitsNumber complex mask, expected bits:15, error:2',
+        IPlib.getPrefixBitsNumber(complexMask));
+
+      console.log('compareIpAddresses ip1 < ip2',
+        IPlib.compareIpAddresses(normalRange[0], normalRange[1]));
+
+      console.log('compareIpAddresses ip1 = ip2',
+        IPlib.compareIpAddresses(normalRange[0], normalRange[0]));
+
+      console.log('compareIpAddresses ip1 > ip2',
+        IPlib.compareIpAddresses(normalRange[1], normalRange[0]));
+
+      console.log('compareIpAddresses NaN',
+        IPlib.compareIpAddresses(normalRange[1], null));
+
+      console.log('getMaskFromPrefixBits expected 255.0.0.0',
+        IPlib.getMaskFromPrefixBits(8));
+
+      console.log('getMaskFromPrefixBits expected 255.255.192.0',
+        IPlib.getMaskFromPrefixBits(18));
+
+      console.log('getMaskFromPrefixBits expected 0.0.0.0',
+        IPlib.getMaskFromPrefixBits(33));
+
+      console.log('getNextIp expected 192.168.0.1',
+        getNextIp(normalRange[0]));
+
+      console.log('getNextIp expected 192.168.1.0',
+        getNextIp(normalRange[1]));
+
+      console.log('getNextIp expected null',
+        getNextIp(wrongIp));
+
+      /* validation */
+      console.log('isIPv4, expected true',
+        IPlib.isIPv4([192, 168, 0, 0]));
+
+      console.log('isIPv4, expected false',
+        IPlib.isIPv4([192, 168, 0, 0, 0]));
+
+      console.log('isIPv4, expected false',
+        IPlib.isIPv4([192, 168, 0, 256]));
+
+      console.log('isIPv4, expected false',
+        IPlib.isIPv4(null));
+
+      console.log('isIPv6, expected true',
+        IPlib.isIPv6([0x2001, 0x0DB8, 0x0000, 0x0000, 0x0000, 0xFF00, 0x0042, 0x8329]));
+
+      console.log('isIPv6, expected false',
+        IPlib.isIPv6([0x2001, 0x0DB8, 0x0000, 0x0000, 0x0000, 0xFF00, 0x0042, 80000]));
+
+})();
